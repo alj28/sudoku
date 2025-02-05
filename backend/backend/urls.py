@@ -23,5 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshSlidingView.as_view(), name='token_refresh'),
-    path('api/signup/', include('Users.urls'))
+    path('api/signup/', include('Users.urls'), name='signup')
 ]
