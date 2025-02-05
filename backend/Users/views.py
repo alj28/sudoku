@@ -17,20 +17,26 @@ def sign_up_view(request):
     if 'POST' != request.method:
         Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    print(f"{request.data}")
     serializer = SignUpSerializer(data=request.data)
     if serializer.is_valid():
         name = serializer.validated_data['name']
         lastname = serializer.validated_data['lastname']
-        password = serializer.validated_data['password_2']
-        username = f"{name.lower()}_{lastname.lower()}"
+        password = serializer.validated_data['password_1']
+        username = serializer.validated_data['username']
+        email = serializer.validated_data['email']
 
         try:
+            # explicitly check whether email and username are unique
+            if User.objects.filter(email=email).exists():
+                return Response(status=status.HTTP_409_CONFLICT)
+            if User.objects.filter(username=username).exists():
+                return Response(status=status.HTTP_409_CONFLICT)
             user = User.objects.create_user(
                 username=username,
                 first_name=name,
                 last_name=lastname,
-                password=password
+                password=password,
+                email=email
             )
             return Response(status=status.HTTP_201_CREATED)
         except Exception as e:

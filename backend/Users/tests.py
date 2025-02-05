@@ -2,17 +2,21 @@ from django.test import TestCase
 from django.urls import reverse
 
 TEST_USER_SIGN_UP_PAYLOAD_1 = {
+    "username"      :   "1-username",
     "name"          :   "1-test-user-name",
+    "lastname"      :   "1-test-user-lastname",
+    "email"         :   "1.test@test.com",
     "password_1"    :   "1-test-password-1-2",
     "password_2"    :   "1-test-password-1-2",
-    "lastname"      :   "1-test-user-lastname",
 }
 
 TEST_USER_SIGN_UP_PAYLOAD_2 = {
+    "username"      :   "2-username",
     "name"          :   "2-test-user-name",
+    "lastname"      :   "2-test-user-lastname",
+    "email"         :   "2.test@test.com",
     "password_1"    :   "2-test-password-1-2",
     "password_2"    :   "2-test-password-1-2",
-    "lastname"      :   "2-test-user-lastname",
 }
 
 SIGN_UP_URL = reverse('signup')
@@ -25,6 +29,24 @@ class SignUpViewTestCase(TestCase):
             TEST_USER_SIGN_UP_PAYLOAD_1
         )
         self.assertEqual(response.status_code, 201)
+
+    def test_two_users_with_same_name_different_email_and_username(self):
+        payload_1 = TEST_USER_SIGN_UP_PAYLOAD_1.copy()
+        payload_2 = TEST_USER_SIGN_UP_PAYLOAD_1.copy()
+        payload_2['username'] = TEST_USER_SIGN_UP_PAYLOAD_2['username']
+        payload_3 = TEST_USER_SIGN_UP_PAYLOAD_1.copy()
+        payload_3['email'] = TEST_USER_SIGN_UP_PAYLOAD_2['email']
+        payload_4 = TEST_USER_SIGN_UP_PAYLOAD_1.copy()
+        payload_4['username'] = TEST_USER_SIGN_UP_PAYLOAD_2['username']
+        payload_4['email'] = TEST_USER_SIGN_UP_PAYLOAD_2['email']
+        response_1 = self.client.post(SIGN_UP_URL, payload_1)
+        response_2 = self.client.post(SIGN_UP_URL, payload_2)
+        response_3 = self.client.post(SIGN_UP_URL, payload_3)
+        response_4 = self.client.post(SIGN_UP_URL, payload_4)
+        self.assertEqual(response_1.status_code, 201)
+        self.assertEqual(response_2.status_code, 409)   # different username
+        self.assertEqual(response_3.status_code, 409)   # different email
+        self.assertEqual(response_4.status_code, 201)   # different username and email
 
     def test_user_already_exists(self):
         response_1 = self.client.post(
