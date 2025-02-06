@@ -6,8 +6,8 @@ TEST_USER_SIGN_UP_PAYLOAD_1 = {
     "name"          :   "1-test-user-name",
     "lastname"      :   "1-test-user-lastname",
     "email"         :   "1.test@test.com",
-    "password_1"    :   "1-test-password-1-2",
-    "password_2"    :   "1-test-password-1-2",
+    "password_1"    :   "1-Test-Password-1-2",
+    "password_2"    :   "1-Test-Password-1-2",
 }
 
 TEST_USER_SIGN_UP_PAYLOAD_2 = {
@@ -15,8 +15,8 @@ TEST_USER_SIGN_UP_PAYLOAD_2 = {
     "name"          :   "2-test-user-name",
     "lastname"      :   "2-test-user-lastname",
     "email"         :   "2.test@test.com",
-    "password_1"    :   "2-test-password-1-2",
-    "password_2"    :   "2-test-password-1-2",
+    "password_1"    :   "2-Test-Password-1-2",
+    "password_2"    :   "2-Test-Password-1-2",
 }
 
 SIGN_UP_URL = reverse('signup')
@@ -98,7 +98,65 @@ class SignUpViewTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 400) # 400 - bad request
 
+    def test_passwords(self):
+        # same password as user name
+        payload_local = TEST_USER_SIGN_UP_PAYLOAD_1.copy()
+        payload_local['username'] = payload_local['password_1']
+        response = self.client.post(
+            SIGN_UP_URL,
+            payload_local
+        )
+        self.assertEqual(response.status_code, 400)
 
+        # password too short - not able to achieve that
+        #payload_local = TEST_USER_SIGN_UP_PAYLOAD_1.copy()
+        #payload_local['password_1'] = 'UUll##12'
+        #payload_local['password_2'] = payload_local['password_1']
+        #response = self.client.post(
+        #    SIGN_UP_URL,
+        #    payload_local
+        #)
+        #self.assertEqual(response.status_code, 400)
+
+        # no numbers
+        payload_local = TEST_USER_SIGN_UP_PAYLOAD_1.copy()
+        payload_local['password_1'] = 'UUll##Ul'
+        payload_local['password_2'] = payload_local['password_1']
+        response = self.client.post(
+            SIGN_UP_URL,
+            payload_local
+        )
+        self.assertEqual(response.status_code, 400)
+
+        # no special character
+        payload_local = TEST_USER_SIGN_UP_PAYLOAD_1.copy()
+        payload_local['password_1'] = 'UUllUl12'
+        payload_local['password_2'] = payload_local['password_1']
+        response = self.client.post(
+            SIGN_UP_URL,
+            payload_local
+        )
+        self.assertEqual(response.status_code, 400)
+
+        # no upper case
+        payload_local = TEST_USER_SIGN_UP_PAYLOAD_1.copy()
+        payload_local['password_1'] = 'llll##12'
+        payload_local['password_2'] = payload_local['password_1']
+        response = self.client.post(
+            SIGN_UP_URL,
+            payload_local
+        )
+        self.assertEqual(response.status_code, 400)
+
+        # no lower case
+        payload_local = TEST_USER_SIGN_UP_PAYLOAD_1.copy()
+        payload_local['password_1'] = 'UUUU##12'
+        payload_local['password_2'] = payload_local['password_1']
+        response = self.client.post(
+            SIGN_UP_URL,
+            payload_local
+        )
+        self.assertEqual(response.status_code, 400)
     
 
 
