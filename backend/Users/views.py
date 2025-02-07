@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 
-from .serializers import SignUpSerializer
+from .serializers import SignUpSerializer, ChangePasswordSerializer
 
 
 # Create your views here.
@@ -15,7 +15,7 @@ from .serializers import SignUpSerializer
 @permission_classes([AllowAny])
 def sign_up_view(request):
     if 'POST' != request.method:
-        Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     serializer = SignUpSerializer(data=request.data)
     if serializer.is_valid():
@@ -26,11 +26,6 @@ def sign_up_view(request):
         email = serializer.validated_data['email']
 
         try:
-            # explicitly check whether email and username are unique
-            if User.objects.filter(email=email).exists():
-                return Response(status=status.HTTP_409_CONFLICT)
-            if User.objects.filter(username=username).exists():
-                return Response(status=status.HTTP_409_CONFLICT)
             user = User.objects.create_user(
                 username=username,
                 first_name=name,
@@ -43,4 +38,31 @@ def sign_up_view(request):
             # TODO: fix that as it may reveal too much data
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def change_password_view(request):
+    if 'POST' != request.method:
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    authenticated_user = request.user
+
+    serializer = ChangePasswordSerializer(
+        data=request.data,
+        context={
+            'authenticated_user'    :   authenticated_user
+        }
+    )
+    if serializer.is_valid():
+        #try:
+        #    user = User.objects.get(username=serializer.validated_data['username'])
+        #except:
+        #    return Response("Unknown user.", status=status.HTTP_400_BAD_REQUEST)
+        try:
+            # hashed password should be stored
+            authenticated_user.set_password(serializer.validated_data['new_password_1'])
+            authenticated_user.save()
+        except:
+            return Response("Unable to update password", status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_202_ACCEPTED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
