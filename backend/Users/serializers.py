@@ -4,10 +4,6 @@ from password_strength import PasswordPolicy
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password
 
-USER_NAME_CHARFIELD_ARGS = {
-    'max_length'    :   100
-}
-
 PASSWORD_CHARFIELD_ARGS = {
     "write_only"    :   True, 
     "style"         :   {
@@ -29,7 +25,7 @@ def password_policy_check(password: str):
         raise serializers.ValidationError('Password too weak', code=status.HTTP_400_BAD_REQUEST)
 
 class SignUpSerializer(serializers.Serializer):
-    username = serializers.CharField(**USER_NAME_CHARFIELD_ARGS)
+    username = serializers.CharField(max_length=100)
     first_name = serializers.CharField(max_length=100)
     last_name = serializers.CharField(max_length=100)
     email = serializers.EmailField()
