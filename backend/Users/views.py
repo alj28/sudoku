@@ -54,10 +54,6 @@ def change_password_view(request):
         }
     )
     if serializer.is_valid():
-        #try:
-        #    user = User.objects.get(username=serializer.validated_data['username'])
-        #except:
-        #    return Response("Unknown user.", status=status.HTTP_400_BAD_REQUEST)
         try:
             # hashed password should be stored
             authenticated_user.set_password(serializer.validated_data['new_password_1'])

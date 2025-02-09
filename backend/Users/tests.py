@@ -227,7 +227,6 @@ class ChangePasswordViewTestCase(TestCase):
         response = self.client.post(
             CHANGE_PASSWORD_URL,
             {
-                'username'  :   TEST_USER_SIGN_UP_PAYLOAD_1['username'],
                 'old_password'  :   TEST_USER_SIGN_UP_PAYLOAD_1['password_1'],
                 'new_password_1'    :   new_password,
                 'new_password_2'    :   new_password,
@@ -252,7 +251,6 @@ class ChangePasswordViewTestCase(TestCase):
             response = self.client.post(
                 CHANGE_PASSWORD_URL,
                 {
-                    'username'  :   TEST_USER_SIGN_UP_PAYLOAD_1['username'],
                     'old_password'  :   TEST_USER_SIGN_UP_PAYLOAD_1['password_1'],
                     'new_password_1'    :   new_invalid_password,
                     'new_password_2'    :   new_invalid_password,
@@ -272,7 +270,6 @@ class ChangePasswordViewTestCase(TestCase):
         response = self.client.post(
             CHANGE_PASSWORD_URL,
             {
-                'username'  :   TEST_USER_SIGN_UP_PAYLOAD_1['username'],
                 'old_password'  :   TEST_USER_SIGN_UP_PAYLOAD_1['password_1'],
                 'new_password_1'    :   new_password,
                 'new_password_2'    :   new_password,
@@ -287,7 +284,6 @@ class ChangePasswordViewTestCase(TestCase):
 
     def test_missing_fields_in_request(self):
         VALID_PAYLOAD = {
-            'username'  :   TEST_USER_SIGN_UP_PAYLOAD_1['username'],
             'old_password'  :   TEST_USER_SIGN_UP_PAYLOAD_1['password_1'],
             'new_password_1'    :   'TEst##33',
             'new_password_2'    :   'TEst##33',
@@ -317,7 +313,6 @@ class ChangePasswordViewTestCase(TestCase):
         response = self.client.post(
             CHANGE_PASSWORD_URL,
             {
-                'username'  :   TEST_USER_SIGN_UP_PAYLOAD_1['username'],
                 'old_password'  :   TEST_USER_SIGN_UP_PAYLOAD_1['password_1'] + '123',
                 'new_password_1'    :   new_password,
                 'new_password_2'    :   new_password,
@@ -340,7 +335,6 @@ class ChangePasswordViewTestCase(TestCase):
         response = self.client.post(
             CHANGE_PASSWORD_URL,
             {
-                'username'  :   TEST_USER_SIGN_UP_PAYLOAD_1['username'],
                 'old_password'  :   TEST_USER_SIGN_UP_PAYLOAD_1['password_1'],
                 'new_password_1'    :   new_password,
                 'new_password_2'    :   new_password,

@@ -50,24 +50,26 @@ class SignUpSerializer(serializers.Serializer):
         return data
     
 class ChangePasswordSerializer(serializers.Serializer):
-    username = serializers.CharField(**USER_NAME_CHARFIELD_ARGS)
     old_password = serializers.CharField(**PASSWORD_CHARFIELD_ARGS)
     new_password_1 = serializers.CharField(**PASSWORD_CHARFIELD_ARGS)
     new_password_2 = serializers.CharField(**PASSWORD_CHARFIELD_ARGS)
 
     def validate(self, data):
+        try:
+            authenticated_user = self.context.get('authenticated_user')
+        except:
+            raise serializers.ValidationError('User do not exists.', code=status.HTTP_400_BAD_REQUEST)
+        username = authenticated_user.username
+
         if data['new_password_1'] != data['new_password_2']:
             raise serializers.ValidationError('Passwords do not match', code=status.HTTP_400_BAD_REQUEST)
-        if data['username'] == data['new_password_1']:
+        if username == data['new_password_1']:
             raise serializers.ValidationError('Password too weak', code=status.HTTP_400_BAD_REQUEST)
         if data['old_password'] == data['new_password_1']:
             raise serializers.ValidationError('Bad password', code=status.HTTP_400_BAD_REQUEST)
         password_policy_check(data['new_password_1'])
 
-        try:
-            authenticated_user = self.context.get('authenticated_user')
-        except:
-            raise serializers.ValidationError('User do not exists.', code=status.HTTP_400_BAD_REQUEST)
+
         if True == check_password(data['new_password_1'], authenticated_user.password):
             raise serializers.ValidationError('Invalid password', code=status.HTTP_400_BAD_REQUEST)
         if False == check_password(data['old_password'], authenticated_user.password):
