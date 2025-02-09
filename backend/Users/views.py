@@ -19,8 +19,8 @@ def sign_up_view(request):
 
     serializer = SignUpSerializer(data=request.data)
     if serializer.is_valid():
-        name = serializer.validated_data['name']
-        lastname = serializer.validated_data['lastname']
+        first_name = serializer.validated_data['first_name']
+        last_name = serializer.validated_data['last_name']
         password = serializer.validated_data['password_1']
         username = serializer.validated_data['username']
         email = serializer.validated_data['email']
@@ -28,8 +28,8 @@ def sign_up_view(request):
         try:
             user = User.objects.create_user(
                 username=username,
-                first_name=name,
-                last_name=lastname,
+                first_name=first_name,
+                last_name=last_name,
                 password=password,
                 email=email
             )

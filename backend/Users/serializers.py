@@ -30,8 +30,8 @@ def password_policy_check(password: str):
 
 class SignUpSerializer(serializers.Serializer):
     username = serializers.CharField(**USER_NAME_CHARFIELD_ARGS)
-    name = serializers.CharField(max_length=100)
-    lastname = serializers.CharField(max_length=100)
+    first_name = serializers.CharField(max_length=100)
+    last_name = serializers.CharField(max_length=100)
     email = serializers.EmailField()
     password_1 = serializers.CharField(**PASSWORD_CHARFIELD_ARGS)
     password_2 = serializers.CharField(**PASSWORD_CHARFIELD_ARGS)

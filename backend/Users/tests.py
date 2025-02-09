@@ -13,8 +13,8 @@ from django.contrib.auth.hashers import check_password
 
 TEST_USER_SIGN_UP_PAYLOAD_1 = {
     "username"      :   "1-username",
-    "name"          :   "1-test-user-name",
-    "lastname"      :   "1-test-user-lastname",
+    "first_name"          :   "1-test-user-name",
+    "last_name"      :   "1-test-user-last_name",
     "email"         :   "1.test@test.com",
     "password_1"    :   "1-Test-Password-1-2",
     "password_2"    :   "1-Test-Password-1-2",
@@ -22,8 +22,8 @@ TEST_USER_SIGN_UP_PAYLOAD_1 = {
 
 TEST_USER_SIGN_UP_PAYLOAD_2 = {
     "username"      :   "2-username",
-    "name"          :   "2-test-user-name",
-    "lastname"      :   "2-test-user-lastname",
+    "first_name"          :   "2-test-user-name",
+    "last_name"      :   "2-test-user-last_name",
     "email"         :   "2.test@test.com",
     "password_1"    :   "2-Test-Password-1-2",
     "password_2"    :   "2-Test-Password-1-2",
@@ -190,15 +190,15 @@ class ChangePasswordViewTestCase(TestCase):
 
     def setUp(self):
         User.objects.create_user(
-            first_name = TEST_USER_SIGN_UP_PAYLOAD_1['name'],
-            last_name = TEST_USER_SIGN_UP_PAYLOAD_1['lastname'],
+            first_name = TEST_USER_SIGN_UP_PAYLOAD_1['first_name'],
+            last_name = TEST_USER_SIGN_UP_PAYLOAD_1['last_name'],
             email = TEST_USER_SIGN_UP_PAYLOAD_1['email'],
             password = TEST_USER_SIGN_UP_PAYLOAD_1['password_1'],
             username = TEST_USER_SIGN_UP_PAYLOAD_1['username']
         )
         User.objects.create_user(
-            first_name = TEST_USER_SIGN_UP_PAYLOAD_2['name'],
-            last_name = TEST_USER_SIGN_UP_PAYLOAD_2['lastname'],
+            first_name = TEST_USER_SIGN_UP_PAYLOAD_2['first_name'],
+            last_name = TEST_USER_SIGN_UP_PAYLOAD_2['last_name'],
             email = TEST_USER_SIGN_UP_PAYLOAD_2['email'],
             password = TEST_USER_SIGN_UP_PAYLOAD_2['password_1'],
             username = TEST_USER_SIGN_UP_PAYLOAD_2['username']
