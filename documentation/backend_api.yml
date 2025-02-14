@@ -1,0 +1,56 @@
+openapi: 3.0.0
+info:
+  title:  Sudoku Game API
+  description: desc
+  version: 1.0.0
+paths:
+  /api/user/new/:
+    post:
+      summary: Create new user
+      operationId: signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            type: object
+            properties:
+              username:
+                type: string
+                maxLength: 100
+                description: The username of the new user.
+              first_name:
+                type: string
+                maxLength: 100
+                description: The name of the user.
+              last_name:
+                type: string
+                maxLength: 100
+                description: The name of the user.
+              email:
+                type: string
+                description: The email of the new user.
+              password_1:
+                type: string
+                description: |
+                  The password of the new user.
+                  The password shall be at least 8 characters long and has
+                    - 2 upper case characters
+                    - 2 lower case characters
+                    - 2 special characters
+                    - 2 digits
+                    - shall not be the same as 'username'
+              password_2:
+                type: string
+                description: The confirmation of the 'password_1'. It must match to the field 'password_1'.
+      responses:
+        '201' :
+          description: New user has been created.
+        '400' :
+          description: >
+             The request body is malformed. 
+             Possible reasons:
+              - one or more fields is missing
+              - user with provided email or username already exists
+              - password too weak
+          
+
