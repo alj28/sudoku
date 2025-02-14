@@ -4,5 +4,22 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "Django Tests - Users",
+				"type": "python",
+				"request": "launch",
+				"program": "${workspaceFolder}/backend/manage.py",
+				"args": [
+				  "test",
+				  "Users"
+				],
+				"django": true
+			}
+		],
+		"compounds": []
+	}
 }
