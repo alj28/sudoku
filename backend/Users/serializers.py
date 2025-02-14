@@ -103,7 +103,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     def validate(self, data):
         authenticated_user = self.__get_user_object(data)
         if False == check_password(data['old_password'], authenticated_user.password):
-            raise serializers.ValidationError({'odl_password' : "Invalid old password."})
+            raise serializers.ValidationError({'old_password' : "Invalid old password."})
         username = authenticated_user.username
         email = authenticated_user.email
         errors = {}
