@@ -95,11 +95,51 @@ class GetNewGameViewTest(TestCase):
         mock_response.text = json.dumps(THIRD_PARTY_API_VALID_RESPONSE_1)
        
         response = self.client.post(
-            GET_NEW_GAME_URL
+            GET_NEW_GAME_URL,
+            {'difficulty'   :   'medium'}
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['board'], THIRD_PARTY_API_VALID_RESPONSE_1['puzzle'])
         self.assertEqual(response.data['solution'], THIRD_PARTY_API_VALID_RESPONSE_1['solution'])
+        
+    @patch('requests.post')
+    def test_invalid_request(self, mock_request):
+        # missing payload
+        response = self.client.post(
+            GET_NEW_GAME_URL
+        )
+        self.assertEqual(response.status_code, 400)
+        
+        # not allowed methods
+        def test_not_allowed_method(method):
+            response = method(
+                GET_NEW_GAME_URL,
+                {'difficulty'   :   'medium'}
+                
+            )
+            self.assertEqual(response.status_code, 405)
+        test_not_allowed_method(self.client.put)
+        test_not_allowed_method(self.client.patch)
+        test_not_allowed_method(self.client.get)
+        test_not_allowed_method(self.client.delete)
+        
+        # invalid payload
+        response = self.client.post(
+            GET_NEW_GAME_URL,
+            {'difficulty-123'   :   'medium'}
+        )
+        self.assertEqual(response.status_code, 400)
+        response = self.client.post(
+            GET_NEW_GAME_URL,
+            {'difficulty'   :   'medium-123'}
+        )
+        self.assertEqual(response.status_code, 400)
+        response = self.client.post(
+            GET_NEW_GAME_URL,
+            {'difficulty'   :   123}
+        )
+        self.assertEqual(response.status_code, 400)
+
         
     @patch('requests.post')
     def test_external_api_fail(self, mock_request):
@@ -109,7 +149,8 @@ class GetNewGameViewTest(TestCase):
         mock_response.text = json.dumps(THIRD_PARTY_API_VALID_RESPONSE_1)
        
         response = self.client.post(
-            GET_NEW_GAME_URL
+            GET_NEW_GAME_URL,
+            {'difficulty'   :   'medium'}
         )
         self.assertEqual(response.status_code, 503)
         
@@ -119,7 +160,8 @@ class GetNewGameViewTest(TestCase):
         mock_response.text = ""
        
         response = self.client.post(
-            GET_NEW_GAME_URL
+            GET_NEW_GAME_URL,
+            {'difficulty'   :   'medium'}
         )
         self.assertEqual(response.status_code, 500)
         
@@ -129,7 +171,8 @@ class GetNewGameViewTest(TestCase):
         mock_response.text = json.dumps(THIRD_PARTY_API_VALID_RESPONSE_1) + '1'
        
         response = self.client.post(
-            GET_NEW_GAME_URL
+            GET_NEW_GAME_URL,
+            {'difficulty'   :   'medium'}
         )
         self.assertEqual(response.status_code, 500)
 

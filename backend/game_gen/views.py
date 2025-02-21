@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from dataclasses import asdict
 
 from .services import generate_sudoku_game, DifficultyLevel
+from .serializers import GetNewGameSerializer
 
 # Create your views here.
 @api_view(['POST'])
@@ -18,8 +19,13 @@ from .services import generate_sudoku_game, DifficultyLevel
 @permission_classes([AllowAny])
 def get_new_game_view(request):
     
+    serializer = GetNewGameSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
     try:
-        game = generate_sudoku_game(DifficultyLevel.MEDIUM)
+        game = generate_sudoku_game(serializer.validated_data['difficulty_enumerated'])
     except ConnectionError:
         return Response(status=status.HTTP_503_SERVICE_UNAVAILABLE)
     except:
