@@ -1,7 +1,7 @@
 import enum
 from django.db import models
 from django.contrib.auth.models import User
-from game_gen.services import DifficultyLevel
+from .services import DifficultyLevel
 
 class ScoreState(enum.Enum):
     IN_PRORGESS = 'in_progress'
