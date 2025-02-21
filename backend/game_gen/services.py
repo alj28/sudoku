@@ -10,6 +10,15 @@ class DifficultyLevel(enum.Enum):
     EASY = "easy"
     MEDIUM = "medium"
     HARD = "hard"
+    
+    @classmethod
+    def choices(cls):
+        return [(key.value, key.name) for key in cls]
+    
+    @classmethod
+    def max_length(cls):
+        lengths = [len(key.name) for key in cls]
+        return max(lengths)
 
 @dataclass
 class RequestBody:

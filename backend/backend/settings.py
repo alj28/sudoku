@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'Users',
     'game_gen',
+    'score'
 ]
 
 MIDDLEWARE = [
