@@ -40,6 +40,40 @@ def generate_sudoku_game(difficulty: DifficultyLevel) -> SudokuGame:
 
     # if response is invalid, it will throw JSONDecodeError
     data = json.loads(response.text)
+      
+    EXPECTED_KEYWORDS = ['puzzle', 'solution', 'difficulty']
+    if not all([k in data for k in EXPECTED_KEYWORDS]):
+        raise ValueError('Invalid format of the response.')
+    
+    if difficulty.value != data['difficulty']:
+        raise ValueError('Invalid difficulty level.')
+    
+    def is_cell_value_valid(value_str: str) -> bool:
+        try:
+            value_int = int(value_str)
+        except:
+            return False
+        return value_int in range(10)
+    
+    def check_matrix_and_raise_error(matrix: list):
+        if list != type(matrix):
+            raise ValueError('Invalid matrix format.')
+        if 9 != len(matrix):
+            raise ValueError('Invalid martix format.')
+        for r in matrix:
+            if list != type(r):
+                raise ValueError('Invalid matrix format.')
+            if 9 != len(r):
+                raise ValueError('Invalid matrix format.')
+            are_cell_values_valid = all([
+                all(str == type(v) for v in r),
+                all(is_cell_value_valid(v) for v in r)
+            ])
+            if not are_cell_values_valid:
+                raise ValueError('Invalid cell value.')
+    check_matrix_and_raise_error(data['puzzle'])
+    check_matrix_and_raise_error(data['solution'])
+
   
     try:
         output = SudokuGame(

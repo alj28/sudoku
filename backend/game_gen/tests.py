@@ -1,4 +1,4 @@
-from copy import copy
+from copy import copy, deepcopy
 from django.urls import reverse
 from unittest.mock import patch, Mock
 from django.test import TestCase
@@ -31,7 +31,7 @@ THIRD_PARTY_API_VALID_RESPONSE_1 = {
     ]
 }
 
-THIRD_PARTY_API_VALID_RESPONSE_3 = {
+THIRD_PARTY_API_VALID_RESPONSE_2 = {
     "difficulty": "medium",
     "puzzle": [
         ["6","0","0","0","0","5","7","3","0"],
@@ -57,7 +57,7 @@ THIRD_PARTY_API_VALID_RESPONSE_3 = {
     ]
 }
 
-THIRD_PARTY_API_VALID_RESPONSE_4 = {
+THIRD_PARTY_API_VALID_RESPONSE_3 = {
     "difficulty": "medium",
     "puzzle": [
         ["0","0","0","0","0","0","0","8","4"],
@@ -175,4 +175,111 @@ class GetNewGameViewTest(TestCase):
             {'difficulty'   :   'medium'}
         )
         self.assertEqual(response.status_code, 500)
+        
+        # requested medium, returned hard difficulty level
+        mock_response = mock_request.return_value
+        mock_response.status_code = 200
+        request_payload = deepcopy(THIRD_PARTY_API_VALID_RESPONSE_1)
+        request_payload['difficulty'] = "hard"
+        mock_response.text = json.dumps(request_payload)
+       
+        response = self.client.post(
+            GET_NEW_GAME_URL,
+            {'difficulty'   :   'medium'}
+        )
+        self.assertEqual(response.status_code, 500)
+        
+        def test_invalid_matrix_format(matrix_name: str):
+            # invalid format
+            mock_response = mock_request.return_value
+            mock_response.status_code = 200
+            request_payload = deepcopy(THIRD_PARTY_API_VALID_RESPONSE_1)
+            request_payload[matrix_name][0].append(1)      # one row of puzzle is 10 fields long
+            mock_response.text = json.dumps(request_payload)
+        
+            response = self.client.post(
+                GET_NEW_GAME_URL,
+                {'difficulty'   :   'medium'}
+            )
+            self.assertEqual(response.status_code, 500)
+            
+            mock_response = mock_request.return_value
+            mock_response.status_code = 200
+            request_payload = deepcopy(THIRD_PARTY_API_VALID_RESPONSE_1)
+            request_payload[matrix_name][0] = request_payload[matrix_name][0][1:]     # one row of puzzle is 8 fields long
+            mock_response.text = json.dumps(request_payload)
+        
+            response = self.client.post(
+                GET_NEW_GAME_URL,
+                {'difficulty'   :   'medium'}
+            )
+            self.assertEqual(response.status_code, 500)
+            
+            mock_response = mock_request.return_value
+            mock_response.status_code = 200
+            request_payload = deepcopy(THIRD_PARTY_API_VALID_RESPONSE_1)
+            request_payload[matrix_name].append(request_payload[matrix_name][0])     # there is 10 rows
+            mock_response.text = json.dumps(request_payload)
+        
+            response = self.client.post(
+                GET_NEW_GAME_URL,
+                {'difficulty'   :   'medium'}
+            )
+            self.assertEqual(response.status_code, 500)
+            
+            mock_response = mock_request.return_value
+            mock_response.status_code = 200
+            request_payload = deepcopy(THIRD_PARTY_API_VALID_RESPONSE_1)
+            request_payload[matrix_name] = request_payload[matrix_name][1:]     # there is 8 rows
+            mock_response.text = json.dumps(request_payload)
+        
+            response = self.client.post(
+                GET_NEW_GAME_URL,
+                {'difficulty'   :   'medium'}
+            )
+            self.assertEqual(response.status_code, 500)
+            
+            # not all cell values are integers
+            mock_response = mock_request.return_value
+            mock_response.status_code = 200
+            request_payload = deepcopy(THIRD_PARTY_API_VALID_RESPONSE_1)
+            request_payload[matrix_name][4][4] = 'a'
+            mock_response.text = json.dumps(request_payload)
+        
+            response = self.client.post(
+                GET_NEW_GAME_URL,
+                {'difficulty'   :   'medium'}
+            )
+            self.assertEqual(response.status_code, 500)
+            
+            # matrix is not even 9x9 list
+            mock_response = mock_request.return_value
+            mock_response.status_code = 200
+            request_payload = deepcopy(THIRD_PARTY_API_VALID_RESPONSE_1)
+            request_payload[matrix_name] = 1
+            mock_response.text = json.dumps(request_payload)
+        
+            response = self.client.post(
+                GET_NEW_GAME_URL,
+                {'difficulty'   :   'medium'}
+            )
+            self.assertEqual(response.status_code, 500)
+        test_invalid_matrix_format('puzzle')
+        test_invalid_matrix_format('solution')
+        
+        def test_missing_field_in_response(field):
+            # requested medium, returned hard difficulty level
+            mock_response = mock_request.return_value
+            mock_response.status_code = 200
+            request_payload = deepcopy(THIRD_PARTY_API_VALID_RESPONSE_1)
+            request_payload.pop(field)
+            mock_response.text = json.dumps(request_payload)
+
+            response = self.client.post(
+                GET_NEW_GAME_URL,
+                {'difficulty'   :   'medium'}
+            )
+            self.assertEqual(response.status_code, 500)
+        for f in THIRD_PARTY_API_VALID_RESPONSE_1:
+            test_missing_field_in_response(f)
 
