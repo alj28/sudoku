@@ -15,7 +15,7 @@
 				"program": "${workspaceFolder}/backend/manage.py",
 				"args": [
 				  "test",
-				  "Users"
+				  "game_gen"
 				],
 				"django": true
 			}
