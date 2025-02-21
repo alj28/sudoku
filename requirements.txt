@@ -3,3 +3,5 @@ djangorestframework==3.15.2
 djangorestframework_simplejwt==5.4.0
 coverage==7.6.10
 password-strength==0.0.3.post2
+requests==2.32.3
+

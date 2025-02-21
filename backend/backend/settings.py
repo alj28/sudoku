@@ -157,3 +157,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+THIRD_PARTY_SUDOKU_GEN_API_URL = "https://you-do-sudoku-api.vercel.app/api"
